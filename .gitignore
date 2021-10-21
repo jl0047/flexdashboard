@@ -1,0 +1,9 @@
+*.gif
+.DS_Store
+
+.Rproj.user
+rsconnect
+index_cache
+index_data
+index_files
+index.html
