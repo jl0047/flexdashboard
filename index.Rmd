@@ -1,0 +1,1196 @@
+---
+title: "Prison Population and Criminal Justice System in Australia"
+runtime: shiny_prerendered
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+---
+
+```{r setup, include=FALSE}
+library(rsconnect)
+library(flexdashboard)
+library(tidyverse)
+library(ggplot2)
+library(plotly)
+library(readr)
+library(shiny)
+library(ggrepel)
+library(ggResidpanel)
+library(broom)
+library(DT)
+library(readxl)
+library(gganimate)
+library(png)
+library(gifski)
+library(kableExtra)
+```
+
+```{r context="data", cache=TRUE, include=FALSE}
+# Q1
+selected_characteristics <- read_csv("data/selected_characteristics.csv")
+history_c <- read_csv("data/history_c.csv")
+return_c <- read_csv("data/return_c.csv")
+prior_au_c <- read_csv("data/prior_au_c.csv")
+model_3 <- read_csv("data/model_3.csv")
+
+history_states <- history_c %>%
+  rename(`Total Prisoners` = `Total prisoners`,
+         `Female Imprisonment Rate` = `Female imprisonment rate`,
+         `Male Imprisonment Rate` = `Male imprisonment rate`,
+         `Mean Age` = `Mean age`,
+         `Median Age` = `Median age`,
+         `Imprisonment Rate` = imprisonment_rate,
+         `Prior Imprisonment` = `Known prior imprisonment`) %>%
+  pivot_longer(cols = c("Total Prisoners":"Prior Imprisonment"),
+               names_to = "characteristics",
+               values_to = "num")
+
+# Q2
+Australian_Total_Prison_Trend <- read_excel("data/Australian Total Prison Trend.xlsx")
+Proportion_of_employed_people_aged_15_64_2017_2019 <- read_excel("data/Proportion of employed people aged 15-64 2017-2019.xlsx")
+
+# Q3
+prisoner_sex <- read_csv("data/prisoner_sex.csv")
+prisoner_age <- read_csv("data/prisoner_age.csv")
+prisoner_country <- read_csv("data/prisoner_country.csv")
+final_sexual_assault_data <- read_csv("data/final_sexual_assault_data.csv")
+
+# Q4
+age_by_offence <- read_csv("data/age_by_offence.csv")
+age_brackets <- unique(age_by_offence$age)
+age_summary <- age_by_offence %>% 
+  select(age, no) %>% 
+  group_by(age) %>% 
+  summarise(no = sum(no))
+
+offences <- unique(age_by_offence$offence)
+```
+
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+
+# Main {.sidebar}
+
+ETC1010 
+ETC1010 Group Project Report
+-----------------------------------------------------------------------
+Created by:
+**01_Wed_Magick**
+
+* Carol (Xiaofan) Chai
+
+* Lalita Wright
+
+* James Knowles
+
+* Joshua Lu
+
+Powered by: Monash University
+
+# Summary and Scope
+
+## Row 1
+### Research Question 1: Carol (Xiaofan)
+**What are the relationships between variables such as money spent on prisons, unemployment rates, type of crime, recidivism rate and prison population?**
+
+This research question outlines an overview of Australia’s crime rate and prison population.
+
+- 1.1. Which crime has the highest prisoners number?
+- 1.2. Why do certain crimes have a higher percentage of people who have previously been imprisoned?
+- 1.3. Is there a relationship between the crime rate, prison population and the money spent on justice services?
+- 1.4. Is there a link between the crime rate and unemployment rate?
+
+### Research Question 2: Jim
+**Indigenous Australians - Ethnicity/overrepresentation in prison population (1-2 contributing factors)**
+
+The proposed research questions aimed to uncover whether the indigenous incarceration rate was a growing issue and whether it was linked to economic factors. We will also discern the Aboriginal representation in prisons across Australia compared to their representation in the population.
+
+- 2.1. Is Aboriginal incarceration a growing problem?
+- 2.2. How does Indigenous representation of prison compare to Victorians?
+- 2.3. Are economic factors a major consideration?
+
+### Research Question 3: Lalita
+**Types of offence - trends surrounding sexual offence**
+
+This research question explores trends surrounding the sexual offence, both as standalone data to find trends in the offenders, as well as in comparison to reporting of sexual offence over time. These findings will be compared to real-world events such as the #MeToo movement and changes in society’s attitudes towards sexual offences.
+
+- 3.1. Is there a trend to the typical age, birth country, or gender of the offender?
+- 3.2. Do these trends match what one might expect based on media profiling or personal experience?
+- 3.4. How many reports and how many convictions of sexual offences have there been annually since 2010? What is the annual rate of convicted sexual offences since 2010?
+- 3.5. Do these numbers make sense regarding movements such as the #MeToo movement and greater societal awareness regarding sexual offences? Did reporting increase since 2017, have conviction numbers or rates increased or decreased?
+
+### Research Question 4: Josh
+**Relationship and trends between age and offences**
+
+The objective of this question is to understand what role age plays in influencing the offences committed, how the relationship between age and offences has changed over the past decade and whether we can adequately model the number of offences using time, age and offence type.
+
+- 4.1: What kind of offences are younger/older offences more associated with?
+- 4.2: How has age distribution of offenders changed over time?
+- 4.3: Is there any association between age and violence?
+
+# Research Question 1
+
+## Row Start
+### What characteristics does a typical prisoner have?
+**Overview of Imprisonment Rate and Prisoner Profile in Australia**
+
+## Row 1
+
+### Total Prisoners
+```{r}
+imprisonment_rate_present <- history_c %>%
+  filter(state == "Australia",
+         year == 2020)
+
+valueBox(value = imprisonment_rate_present$`Total prisoners`,
+         icon = "fa-exclamation-triangle",
+         caption = "Total Number of Prisoners",
+         color = "red")
+```
+
+### Imprisonment Rate Male
+```{r}
+imprisonment_rate_present <- history_c %>%
+  filter(state == "Australia",
+         year == 2020)
+
+valueBox(value = imprisonment_rate_present$`Male imprisonment rate`,
+         icon = "fa-male",
+         caption = "No. of Male Prisoners per 100,000 Male Adults",
+         color = "blue")
+```
+
+### Imprisonment Rate Female
+```{r}
+imprisonment_rate_present <- history_c %>%
+  filter(state == "Australia",
+         year == 2020)
+
+valueBox(value = imprisonment_rate_present$`Female imprisonment rate`,
+         icon = "fa-female",
+         caption = "No. of Female Prisoners per 100,000 Female Adults",
+         color = "pink")
+```
+
+### Imprisonment Rate Female
+```{r}
+imprisonment_rate_present <- history_c %>%
+  filter(state == "Australia",
+         year == 2020)
+
+valueBox(value = imprisonment_rate_present$`Aboriginal and Torres Strait Islander`,
+         icon = "fa-balance-scale",
+         caption = "Percentages of Prisoners that are Aboriginal and Torres Strait Islanders",
+         color = "orange")
+```
+
+### Median Age
+```{r}
+imprisonment_rate_present <- history_c %>%
+  filter(state == "Australia",
+         year == 2020)
+
+valueBox(value = imprisonment_rate_present$`Median age`,
+         icon = "fa-id-card",
+         caption = "Median Age of Prisoners",
+         color = "grey")
+```
+
+## Row 3 Has this changed over the years? {data-height=650}
+
+### Has this changed over the years?
+
+```{r}
+history_moving <- history_c %>%
+  ggplot(aes(x = year,
+             y = imprisonment_rate,
+             colour = state)) +
+  geom_point() +
+  scale_x_continuous(breaks = seq(min(history_c$year), max(history_c$year), by = 1)) +
+  labs(title = "{closest_state}",
+       x = "Year",
+       y = "Imprisonment Rate per 100,000 Adults") +
+  transition_states(year, transition_length = 1, state_length = 1) +
+  shadow_trail() +
+  ease_aes('linear')
+
+animate(history_moving)
+```
+
+
+### Overview
+```{r}
+history_states$characteristics <- as.factor(history_states$characteristics)
+
+selectInput(inputId = "FilterRow",
+            label = "Characteristics",
+            choices = levels(history_states$characteristics))
+
+plotOutput("p_history_states")
+```
+
+```{r context="server"}
+selectedData <- reactive({
+  history_states %>%
+    filter(characteristics == input$FilterRow)
+})
+
+output$p_history_states <- renderPlot({ggplot(selectedData(),
+                  aes(x = year,
+                      y = num,
+                      colour = state,
+                      group = state)) +
+  geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = seq(min(history_states$year), max(history_states$year), by = 1)) +
+  theme(legend.position = "right",
+        axis.text.x = element_text(angle = 45, hjust = 1)) + 
+    labs(title = "Changes in prisoner profile by selected characteristics",
+       x = "Year",
+       y = "") +
+    geom_vline(xintercept = 2019,
+             linetype = "dashed",
+             colour = "red")
+}, height = 500)
+```
+
+## Row 4
+
+### Comparisons
+
+```{r}
+characteristics_all <- selected_characteristics %>%
+  filter(!states == "Australia") %>%
+  pivot_longer(cols = c("Prior Imprisonment Status","Aboriginal Status", "Sex"),
+               names_to = "characteristics",
+               values_to = "detail")
+  
+p1_1 <-  characteristics_all %>%
+  group_by(states, characteristics, detail) %>%
+  summarise(prisoners = sum(num_prisoners)) %>%
+  ggplot(aes(x = reorder(states, prisoners),
+           y = prisoners,
+           fill = detail)) +
+  geom_col() +
+  coord_flip() + 
+  facet_grid(~ characteristics) +
+  scale_fill_brewer(palette = "Set2") +
+  theme(legend.position = "none")+
+  labs(title = "Total prisoner numbers by selected characteristics",
+       subtitle = "",
+       x = "State/Territory",
+       y = "Number of Prisoners")
+
+ggplotly(p1_1)
+```
+
+
+## Row 5 {.tabset .tabset-fade}
+
+### Which crime has the highest prisoners number?
+```{r}
+prior_au_c <- read_csv("data/prior_au_c.csv")
+
+p1 <- prior_au_c %>%
+    ggplot(aes(x = reorder(offence, total),
+             y = total,
+             fill = offence))+
+  geom_col() +
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(y = "Total number of people imprisoned",
+       x = "")
+
+p1
+```
+
+### Which crime has higher recidivism rate?
+
+```{r}
+prior_au_c <- read_csv("data/prior_au_c.csv")
+
+p2 <- prior_au_c %>%
+  filter(imprisonment_status == "prior_imp") %>%
+  ggplot(aes(x = reorder(offence, prior_imprisonment),
+             y = prior_imprisonment,
+             fill = offence))+
+  geom_col() +
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(y = "Percentage of prisoners with prior imprisonment",
+       x = "")
+
+p2
+```
+
+
+### Prison Returners - Australia
+
+```{r}
+return_prison <- return_c %>%
+  pivot_longer(cols = c("NSW":"Australia"),
+               names_to = "states",
+               values_to = "percentage_return")
+
+return_2020 <- return_prison %>%
+  filter(year == 2020)
+
+p1_4_return_au <- return_prison %>%
+  filter(states == "Australia") %>%
+  ggplot(aes(x = year,
+             y = percentage_return)) +
+  geom_line() +
+  geom_point(shape = 1, size = 3, colour = "red") +
+  geom_label_repel(aes(label = percentage_return), color = "blue") +
+  theme(legend.position = "none") +
+  labs(title = "Percentage of adults released from prison who returned to prison \n with a new sentence within two years",
+       subtitle = "",
+       y = "Percentage of Returning Prisoners",
+       x = "Year") +
+  geom_vline(xintercept = 2019,
+             linetype = "dashed",
+             colour = "red") +
+  geom_text(aes(x = 2019, y = 45),
+            label = "lockdown",
+            angle = 90)
+
+p1_4_return_au
+```
+
+### Prison Returners - by State/Territory
+```{r}
+p1_4_return <- return_prison %>%
+  filter(!states == "Australia") %>%
+  ggplot(aes(x = year,
+             y = percentage_return,
+             colour = states)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~states,
+             scales = "free_y") +
+  theme(legend.position = "none") +
+  labs(title = "Percentage of adults released from prison who returned to prison with a new sentence within two years from 2015 - 2020",
+       subtitle = "",
+       y = "Percentage of Returning Prisoners",
+       x = "Year")
+
+ggplotly(p1_4_return)
+```
+
+## Row 6
+
+### Median Sentence
+```{r}
+valueBox(value = 3.5,
+         icon = "fa-clock",
+         caption = "Median Sentence Length",
+         color = "lavender")
+```
+
+### Spending on Prisoners
+```{r}
+valueBox(value = 3882858,
+         icon = "fa-dollar-sign",
+         caption = "real operating expenditure on prisons (in $1,000AUD)",
+         color = "lightgreen")
+```
+
+### Employment Rate
+```{r}
+valueBox(value = 71,
+         icon = "fa-briefcase",
+         caption = "percentage of Australian population aged between 15-64 who are employed",
+         color = "lightblue")
+```
+
+## Row 7
+
+### **Median Sentence Length**
+
+**Forget being tough on crime. It's time we were smart on crime** (*the Age*)
+https://www.theage.com.au/national/victoria/forget-being-tough-on-crime-it-s-time-we-were-smart-on-crime-20191002-p52wvo.html
+
+### **Expenditure on Prisons**
+**Skewed Priorities – Comparing The Growth Of Prison Spending With Police Spending** (*Institute of Public Affairs*)
+https://ipa.org.au/publications-ipa/research-papers/skewed-priorities-comparing-the-growth-of-prison-spending-with-police-spending
+
+### **Expenditure on Prisons**
+**Unemployment and crime one more time** (*Criminology Advisory Research Council*)
+https://www.aic.gov.au/crg/reports/crg-50-89
+
+## Row 8
+
+### Relationship between crime rate, prison population and money spent on justice services?
+```{r}
+p1_5_length <- model_3 %>%
+  ggplot(aes(x = median_sentence_length,
+             y = imprisonment_rate)) +
+  geom_point() +
+  labs(title = "",
+       y = "Imprisonment Rate",
+       x = "Median Sentence Length") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+p1_5_expenditure <- model_3 %>%
+  ggplot(aes(x = expenditure,
+             y = imprisonment_rate)) +
+  geom_point() +
+  labs(title = "",
+       y = "Imprisonment Rate",
+       x = "Expenditure on Prisons") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+p1_5_employment <- model_3 %>%
+  ggplot(aes(x = expenditure,
+             y = employment_rate)) +
+  geom_point() +
+  labs(title = "",
+       y = "Imprisonment Rate",
+       x = "Employment Rate") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+gridExtra::grid.arrange(p1_5_length, p1_5_expenditure, p1_5_employment, nrow = 1)
+```
+
+## Row 9
+
+### Variables Explained
+- `median_sentence_length`: the median number of years a prisoner is sentenced 
+- `expenditure on prison`: real operating expenditure on prisons (in $1,000AUD)
+- `employment rate`: the proportion of Australian population aged between 15-64 who are employed (%)
+- `imprisonment_rate`: the number of prisoners per 100,000 adult population
+
+### Evaluate the Model
+
+```{r}
+factors <- lm(imprisonment_rate ~ median_sentence_length + expenditure + employment_rate, data = model_3)
+
+resid_panel(factors, plot = "all")
+```
+
+## Row 9 Model
+
+### Evaluate the Model
+
+```{r}
+tidy(factors) %>% kable() %>% kable_styling()
+```
+
+## Row 10 Other Variables Explained
+
+### Imprisonment Rates
+- `male impriosnment rate`: the number of male prisoners per 100,000 male adults population
+- `female impriosnment rate`: the number of female prisoners per 100,000 female adults population
+- `Imprisoment Rate`: the number of prisoners per 100,000 adults
+
+### Prior Imprisonment
+- `offence`: 16 most serious offences
+- `total`: total number of prisoners convicted and sentenced for the specified offence
+- `prior imprisonment status`: the % of prisoners who have previously been imprisoned - with or without prior imprisonment
+
+### Prisoners Returners
+- `return`: percentage of adults released from prison who returned to prison with a new sentence within two years - helpful indicator of recidivism
+
+### Other Characteristics
+- `Indigeous Status`: percentages of total prisoners that are Aboriginal or Torres Strait Islanders
+- `mean age`: average age of offenders receiving the imprisonment sentence (years)
+- `median age`: the age over which more than half of the prisoners is at (years)
+
+# Research Question 2
+
+## Row Start
+### Indigenous incarceration rate and overepresentation in Australian prisons
+**Is Aboriginal and Torres Strait Islanders overrepresented in Australia's prison population? What could be some possible reasons?**
+
+## Row 1 {data-height=500}
+
+### Is Aboriginal Incarceration a Growing Issue?
+
+```{r}
+p2_1 <- Australian_Total_Prison_Trend %>%
+  ggplot(aes(x = Year, y = `Aboriginal and Torres Strait Islander Prisoners (per 100,00)`)) + 
+  geom_point() + 
+  geom_line() +
+  scale_x_continuous(breaks = seq(min(Australian_Total_Prison_Trend$Year),max(Australian_Total_Prison_Trend$Year), by = 1)) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+  ylab("Aboriginal and Torres Strait Islander Prisoners per 100,000") + transition_reveal(Year)
+
+animate(p2_1)
+```
+
+### Aboriginal and Torres Strait Islander Prisoners Population by State
+
+```{r}
+p1_2_aboriginal <-  history_states %>%
+  filter(characteristics == "Aboriginal and Torres Strait Islander",
+         !state == "Australia") %>%
+  ggplot(aes(x = year,
+             y = `num`,
+             colour = state)) +
+  geom_point() +
+  geom_line() +
+  scale_fill_brewer(palette = "Set2") +
+  scale_x_continuous(breaks = seq(min(history_states$year), max(history_states$year), by = 1)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+  labs(x = "Year",
+       y = "")
+
+ggplotly(p1_2_aboriginal)
+```
+
+## Row 2
+
+### Percenrage change of Aboriginal prisoners population per 100,000 since 2010
+
+```{r}
+Australian_Total_Prison_Trend_change <- Australian_Total_Prison_Trend %>%
+  rename(`Aboriginal and Torres Strait Islander` = `Aboriginal and Torres Strait Islander Prisoners (per 100,00)`) %>%
+  select(Year, `Aboriginal and Torres Strait Islander`) %>%
+  filter(Year %in% c("2010","2020")) %>%
+  pivot_wider(names_from = Year,
+              values_from = `Aboriginal and Torres Strait Islander`) %>%
+  summarise(change = (`2020` - `2010`)/`2020`*100) %>%
+  round(digits = 2)
+
+gauge(value = Australian_Total_Prison_Trend_change$change,
+      symbol = "% +",
+      min = -100,
+      max = 100,
+      label = "increase",
+      sectors = gaugeSectors(
+        success = c(-100,0), 
+        warning = c(1, 50),
+        danger = c(51, 100)))
+
+```
+
+### Explanation
+
+As there is a clear upwards trend, we can simply conclude that there is a growing issue with Indigenous incarceration. This trend may be associated with socioeconomic factors.
+
+### Is Aboriginal Incarceration a Growing Issue?
+
+```{r}
+valueBox(value = "YES",
+         color = "grey",
+         icon = "fa-sad-tear",
+         caption = "Is Aboriginal Incarceration a Growing Issue?")
+```
+
+## Row 3
+
+### Aboriginal representation vs Victorians
+
+```{r}
+VicInd <- Australian_Total_Prison_Trend %>%
+  pivot_longer(cols = c("Aboriginal and Torres Strait Islander Prisoners (per 100,00)","Victorians per 100000"),
+               names_to = "group",
+               values_to = "number per 100,000") 
+p2_2 <- ggplot (data = VicInd,
+        aes(x = Year, y = `number per 100,000`, colour = group)) + geom_point() +
+  scale_y_continuous(breaks = seq(0,2000, by = 250)) + scale_x_continuous(breaks = seq(min(VicInd$Year),max(VicInd$Year), by = 1)) +
+  theme(legend.position = "bottom") + 
+  geom_smooth()
+
+p2_2
+```
+
+## Row 3
+
+### Are economic factors a major consideration?
+
+```{r}
+economic_consideration_new <- Proportion_of_employed_people_aged_15_64_2017_2019 %>%
+  pivot_longer(cols = c("Non Indigenous", "Indigenous"),
+               names_to = "ethnicity",
+               values_to = "percentage employed") %>%
+  ggplot(aes(x = State, y = `percentage employed`, fill = ethnicity)) + geom_col(position = "dodge") 
+
+ggplotly(economic_consideration_new)
+```
+
+
+# Research Question 3
+
+## Row 1 
+
+### **In 2020, who is typically imprisoned for sexual assault?**
+**Analysing sex, age, and country of birth**
+
+## Row 2
+
+### Sex
+
+```{r}
+prisoner_sex_graph <- prisoner_sex %>%
+  filter(sex != "Total prisoners") %>%
+  select(sex:sex_offence_no)
+
+sex_profile <- prisoner_sex_graph %>%
+  select(sex) %>%
+  filter(sex == "Males")
+
+valueBox(value = sex_profile,
+         icon = "fa-male",
+         caption = "most represented sex",
+         color = "orange")
+```
+
+### Age
+
+```{r}
+prisoner_age_graph <- prisoner_age %>%
+  filter(Age != "Total") %>%
+  select(Age:sex_offence_no) %>%
+  mutate(Age = str_remove(Age, ' years')) 
+
+age_profile <- prisoner_age_graph %>%
+  select(Age) %>%
+  filter(Age == "65 and over")
+
+valueBox(value = age_profile,
+         icon = "fa-user-clock",
+         caption = "most represented age group",
+         color = "red")
+```
+
+### Country of Birth
+
+```{r}
+prisoner_country_graph <- prisoner_country %>%
+  filter(country != "Total") %>%
+  select(country:sex_offence_no)
+
+country_profile <- prisoner_country_graph %>%
+  select(country) %>%
+  filter(country == "Australia")
+
+valueBox(value = country_profile,
+         icon = "fa-globe-asia",
+         caption = "most represented country of birth",
+         color = "maroon")
+
+```
+
+## Row 3 {.tabset}
+
+### Sex 
+Sex 🚻
+```{r}
+ggplot(prisoner_sex_graph,
+       aes(x = reorder(sex, -sex_offence_no),
+           y = sex_offence_no,
+           fill = sex)) +
+  labs(y= "count", x = "sex") +
+  geom_col() +
+  ggtitle("Sexual Assault Incarceration by Sex")
+
+```
+
+### Age
+
+Age
+```{r age}
+ggplot(prisoner_age_graph,
+       aes(x = `Age`,
+           y = sex_offence_no)) +
+  labs(y= "count", x = "age range") +
+  geom_col() +
+  theme(axis.text.x = element_text(angle=45, hjust=1)) +
+  ggtitle("Sexual Assault Incarceration by Age")
+```
+
+### Country of Birth
+
+Country of Birth
+```{r}
+prisoner_by_country_plotly <- ggplot(prisoner_country_graph,
+       aes(x = reorder(country, -sex_offence_no),
+           y = sex_offence_no,
+           fill = country)) +
+  labs(y= "count", x = "country of birth") +
+  geom_col() +
+  theme(axis.text.x = element_text(angle=45, hjust=1)) +
+  theme(legend.key.size = unit(0.3, 'cm'), 
+        legend.key.height = unit(0.3, 'cm'), 
+        legend.key.width = unit(0.5, 'cm'), 
+        legend.title = element_text(size=7), 
+        legend.text = element_text(size=5),
+        plot.title = element_text(size = 10),
+        axis.text.x = element_text(size = 6),
+        axis.title = element_text(size = 8)) +
+  ggtitle("Sexual Assault Incarceration:
+          Country of Birth")
+
+prisoner_by_country_foreign <- prisoner_country_graph %>% 
+  filter(country != "Australia") %>%
+  filter(country != "Other")
+  
+prisoner_country_foreign <- ggplot(prisoner_by_country_foreign,
+       aes(x = reorder(country, -sex_offence_no),
+           y = sex_offence_no,
+           fill = country)) +
+  labs(y= "count", x = "country of birth") +
+  geom_col() +
+  theme(axis.text.x = element_text(angle=45, hjust=1)) +
+  theme(legend.key.size = unit(0.3, 'cm'), 
+        legend.key.height = unit(0.3, 'cm'), 
+        legend.key.width = unit(0.5, 'cm'), 
+        legend.title = element_text(size=7), 
+        legend.text = element_text(size=5),
+        plot.title = element_text(size = 10),
+        axis.text.x = element_text(size = 6),
+        axis.title = element_text(size = 8)) +
+  ggtitle("Sexual Assault Incarceration:
+          Exclude Australia")
+
+ggplotly(prisoner_by_country_plotly)
+```
+
+## Row 4
+
+### Trends
+**How many reports and how many convictions of sexual offences have there been annually since 2010? What is the annual rate of convicted sexual offences since 2010?**
+
+## Row 5
+
+### Reports and Convictions
+
+```{r count of reports and rate}
+sexual_assault_data <- final_sexual_assault_data %>%
+  select(year:conviction_rate_percent)
+sexual_assault_long <- sexual_assault_data %>%
+  pivot_longer(cols = c("sex_offence_no", "real_assault_n"),
+               names_to = "assault_data",
+               values_to = "count")
+
+sexual_assault_over_time <- ggplot(sexual_assault_long,
+                                   aes(x = year,
+                                       y = count,
+                                       colour = assault_data)) + 
+  geom_point() +
+  labs(x = "year", 
+       y ="count",
+       color = "legend") +
+  geom_smooth() +
+  theme(axis.text.x = element_text(angle=45, hjust=1))
+
+ggplotly(sexual_assault_over_time)
+```
+
+## Row 6
+
+### Average yearly convictions
+
+```{r averages}
+average_conv <- round(mean(sexual_assault_data$sex_offence_no), 0)
+
+valueBox(value = average_conv,
+         icon = "fa-bars",
+         caption = "average yearly convictions 2010-2018",
+         color = "red")
+
+```
+
+### Average reports per year
+```{r}
+average_reports <- round(mean(sexual_assault_data$real_assault_n), 0)
+
+valueBox(value = average_reports,
+         icon = "fa-file-signature",
+         caption = "average yearly reports 2010-2018",
+         color = "blue")
+
+```
+
+### Proportion of convictions
+```{r}
+average_propconv <- (round(sum(mean(sexual_assault_data$sex_offence_no)/mean(sexual_assault_data$real_assault_n))*100, 0))
+
+
+valueBox(value = average_propconv,
+         icon = "fa-percent",
+         caption = "average proportion convicted 2010-2018",
+         color = "green")
+```
+
+## Row 7
+
+### Real-World Impacts
+**Did reporting increase since 2017 (when the #MeToo movement rose to prominence), and did conviction numbers or rates increase or decrease?**
+
+## Row 8
+
+### Reports
+```{r trends}
+sexual_assault_reports <- sexual_assault_data %>%
+  filter(year >= 2016)
+ggplot(sexual_assault_reports, 
+       aes(x = year, 
+           y = real_assault_n)) +
+  geom_line() 
+
+```
+
+
+### Convictions
+```{r}
+sexual_assault_convictions <- sexual_assault_data %>%
+  filter(year >= 2016)
+ggplot(sexual_assault_convictions,
+       aes(x = year,
+           y = sex_offence_no)) +
+  geom_line()
+
+```
+
+
+## Row 9 
+
+### **Modelling the Data**
+How well does the model fit?
+How much of conviction rate is explained by an increase in reporting?
+What do these connections mean?
+
+## Row 10
+
+### Linear Regression
+```{r regression1}
+sexual_offence_lm <- lm(conviction_rate_percent ~ real_assault_n, data = sexual_assault_data)
+
+ggplot(sexual_assault_data, 
+       aes(x = real_assault_n, 
+           y = conviction_rate_percent)) + 
+  geom_point() +
+  stat_smooth(method = "lm", col = "blue")
+```
+
+
+## Row 12 {data-width=150}
+
+### Box
+```{r}
+valueBox(value = "significance and accuracy",
+         icon = "fa-info",
+         caption = "metrics",
+         color = "lightblue")
+
+```
+
+### P-Value
+```{r}
+sexual_offence_r2 <- glance(sexual_offence_lm)
+sexual_offence_r2_small <- sexual_offence_r2 %>%
+  select(r.squared:p.value)
+
+
+valueBox(value = round(sexual_offence_r2_small$p.value, 4),
+         icon = "fa-exclamation-triangle",
+         caption = "p-value",
+         color = "pink")
+ 
+```
+ 
+### R-squared
+```{r}
+valueBox(value = round(100*sexual_offence_r2_small$r.squared, 2),
+         icon = "fa-percent",
+         caption = "R-Squared",
+         color = "green")
+
+```
+
+
+## Row 13 {.tabset}
+
+### resid panel
+```{r regression3}
+sexual_offence_lm <- lm(conviction_rate_percent ~ real_assault_n, data = sexual_assault_data)
+
+resid_panel(sexual_offence_lm, plots = "all")
+```
+
+### Explanations
+
+**Residual vs Predicted**
+There is a positive parabolic trend to the graph, indicating that sexual_assault_n (annual reports of sexual assault) does not account entirely for rate of conviction, and some variance is unaccounted for. Other variables may need to be explored, as well as outside effects such as laws regarding the conviction of sexual offence and age of reports - if they are old may make them less or more convictable. 
+
+
+**QQ-Plot**
+- the values roughly follwo the 45 degree line, however the data is not uniformly falling underneath the line, indicating the residuals are not normal
+
+
+**COOKs D Plot**
+- this indicates that one data in particular influences the model, however with such a small data set, others could also be influential in the context, despite looking small on this graph
+
+
+**Residual Plot, Response v Predicted**
+- as these residual plots follow a trend, it suggests not all variance is accounted for, or an outlier in the data may exist
+
+# Research Objective 4
+
+## Header Row with Info Cards
+
+### Median age bracket of offenders
+
+```{r median-age-bracket}
+valueBox(value = age_brackets[4], icon = "fa-info-circle", color = "lightblue")
+```
+
+### Offenders in youngest age bracket (20-24 yrs)
+
+```{r num-young-offenders}
+valueBox(value = (age_summary %>% filter(age == age_brackets[1]))$no, 
+         icon = "fa-user", 
+         color = "#FF0080")
+```
+
+
+### Offenders in oldest age bracket (65+)
+
+```{r num-old-offenders}
+valueBox(value = (age_summary %>% filter(age == age_brackets[length(age_brackets)]))$no,
+         icon = "fa-user-tie", color = "#7928CA")
+```
+
+## Main (Header) Plots {.tabset .tabset-fade}
+
+### Age Groups by Offence
+
+```{r}
+p_age_offence <- age_by_offence %>% 
+    filter(year == 2020) %>% 
+    mutate(offence = str_wrap(offence, width = 35)) %>% 
+    ggplot(aes(x = as.factor(age), y = no)) + geom_col(fill = "purple") + 
+    labs(title = "Age breakdown for major offence categories (2020)") + xlab("Age") + ylab("No. of prisoners") +
+    theme(strip.text = element_text(size = 6), 
+          axis.text.x = element_text(angle = 90, size = 7.5), 
+          axis.text.y = element_text(size = 6)
+    ) + facet_wrap(~ as.factor(offence), scales = "free_y")
+ggplotly(p_age_offence)
+```
+
+### Offence by Age Groups
+```{r offence-breakdown-by-age-anim}
+# Animates offence breakdown for all age groups
+p_off_by_age <- age_by_offence %>% 
+  filter(year == 2020) %>% 
+  ggplot(aes(x = as.factor(offence), y = no)) + geom_col(fill = "plum") + 
+  labs(title = paste0("Offence breakdown for age group: {closest_state}")) + xlab("Offence") + ylab("No. of prisoners") +
+  theme(strip.text = element_text(size = 6), 
+        axis.text.x = element_text(size = 6), 
+        axis.text.y = element_text(size = 6)
+  ) + coord_flip() +
+  theme_minimal() + transition_states(age, transition_length = 3) + ease_aes() +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 50))
+
+animate(p_off_by_age, height = 600, width = 1200, res = 150)
+anim_save("p_off_by_age.gif")
+```
+
+
+## Analysis of Main Plots
+
+### Key observations
+
+* Many offence categories have a consistent **positively-skewed** age distribution, typically younger individuals commit more offences than older age groups.
+
+* On the contrary, most common offenders of sexual assaults are 65+ years. Homicides also have a slightly more pronounced tail end of the distribution and have additional offenders in the older age groups.
+
+* Young individuals tend to commit acts causing injury, robbery and unlawful entry.
+
+* Older persons tend to commit sexual assaults, homicides and illicit drug offences.
+
+Note: above plots consider only data from **2020**.
+
+
+## Age Over Time {.tabset .tabset-fade data-height=725}
+
+### Age breakdown over time
+
+```{r}
+# Select offence
+selectInput(inputId = "FilterOffence", label = "Filter by Offence", choices = offences)
+
+plotlyOutput("p_age_over_time")
+```
+
+```{r context="server"}
+age_count_over_time <- function(data) {
+  p <- data %>% 
+  ggplot(aes(x = year, y = no)) + geom_line(aes(group = age, colour = as.factor(age))) +
+  labs(title = unique(data$offence), color = "Age") + ylab("No. of prisoners") +
+  theme(legend.text = element_text()) +
+  scale_x_continuous(breaks = seq(min(data$year), max(data$year), by = 1)) +
+  scale_color_manual() +
+  scale_color_viridis_d()
+  ggplotly(p) %>% layout(height = 600)
+}
+
+selectedDataOffence <- reactive({
+  age_by_offence %>% filter(offence == input$FilterOffence)
+})
+
+# Render plotly
+output$p_age_over_time <- renderPlotly({
+  age_count_over_time(selectedDataOffence())
+})
+```
+
+### Acts intended to cause injury
+
+```{r age-by-offence-lite}
+p_age_by_off <- age_by_offence %>% 
+  mutate(year = as.integer(year)) %>% 
+  filter(grepl(offences[2], offence)) %>% 
+  ggplot(aes(x = as.factor(age), y = no)) + geom_col(fill = "midnightblue") + 
+  labs(title = paste0(offences[2], " ({frame_time})")) + xlab("Age") + ylab("No. of prisoners") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  transition_time(year) + ease_aes()
+animate(p_age_by_off)
+anim_save(paste0(match(offences[2], offences), ".gif"))
+```
+
+
+## Age and Violence
+
+### Violent & non-violent offending
+
+```{r}
+violent_offences <- c(offences[1], offences[2], offences[3], offences[4])
+# Add column for violent and non-violent crimes
+age_by_offence <- age_by_offence %>%
+  mutate(violent = ifelse(offence %in% violent_offences, T, F))
+age_by_offence$violent <- fct_recode(as.factor(age_by_offence$violent), "Violent" = "TRUE", "Non-violent" = "FALSE")
+
+age_by_offence %>% 
+  group_by(age, year, violent) %>% 
+  summarise(no = sum(no)) %>% 
+  ggplot(aes(x = year, y = no)) + geom_line(aes(group = age, colour = as.factor(age))) +
+  labs(title = "Comparison of non-violent and violent offending", color = "Age") + 
+  ylab("No. of prisoners") +
+  theme(legend.text = element_text(), axis.text.x = element_text(angle = 90)) +
+  scale_x_continuous(breaks = seq(min(age_by_offence$year), max(age_by_offence$year), by = 1)) +
+  scale_color_manual() +
+  scale_color_viridis_d() +
+  facet_wrap(~ violent)
+
+ggplotly()
+```
+
+
+## Age and Offence Modelling
+
+### Modelling offences using age, offence type and year
+
+```{r lm-violent}
+# Standardise years
+age_by_offence_lm <- age_by_offence %>% mutate(year2010 = year - 2010)
+# Create design matrix
+age_by_offence_lm <- model.matrix(~ age + offence + year2010, data = age_by_offence_lm)
+
+# Model fit
+lm_violent <- lm(age_by_offence$no ~ age_by_offence_lm + 0)
+# Rename coefficients
+names(lm_violent$coefficients) <- colnames(age_by_offence_lm)
+tidy(lm_violent) %>% kable() %>% kable_styling()
+```
+
+## Model Variables {data-height=100}
+
+### Age
+
+- `age20-24`: denotes whether offender is in 20-24 yrs age group
+
+### Offence type
+
+- `offenceActs intended to cause injury`: denotes whether offence is 'Acts intended to cause injury'
+
+### Year
+
+- `year2010`: number of years since 2010
+
+## Model Analysis
+
+### Model diagnostics
+
+```{r lm-violent-fit}
+glance(lm_violent) %>% select(r.squared, adj.r.squared) %>%  kable() %>% kable_styling()
+```
+
+# Conclusion & References
+
+## Row 1
+
+### Conclusion
+
+Overcrowding in prisons prompts us to take a closer look at the demographic and socioeconomic factors behind high crime and imprisonment rates. Studying the prison population has uncovered some interesting social issues, and our research has helped us to either confirm or overturn stereotypes about prisoners.
+
+## Row 2
+
+### Data
+
+Australia Bureau of Statistics. (2018, August). Estimates of Aboriginal and Torres Strait Islander Australians (No. 3238.0.55.001). Retrieved from https://www.abs.gov.au/statistics
+ 
+Australia Bureau of Statistics. (2020, December). Prisoners in Australia (No. 4517.0). Retrieved from https://www.abs.gov.au/statistics
+ 
+Australian Institute of Health and Welfare. (2021). Indigenous employment. Retrieved from https://www.aihw.gov.au/reports/australias-welfare/indigenous-employment
+ 
+Barnert. E. S., Dudovitz. R., Nelson. B. B., Coker. T. R., Biely. C., Li. N., & Chung. P. J.(2017). How does incarcerating young people affect their adult health outcomes? Pediatrics 2017, 139(2), 139-148. doi:10.1542/peds.2016-2624
+
+Bricknell. S. (2008). Trends in violent crime. Australian Institute of Criminology. Retrieved from https://www.aic.gov.au/publications/tandi/tandi359
+ 
+Bushnell. A. (2019). Skewed priorities: Comparing the growth of prison spending with police spending (Research Discussion Paper). Retrieved from Institute of Public Affairs website: https://ipa.org.au/wp-content/uploads/2019/11/Skewed-priorities-Comparing-the-growth-of-prison-spending-with-police-spending.pdf
+ 
+John. B., & Bruce. C. (1992). Unemployment and crime one more time (Research Discussion Paper). Retrieved from the Criminology Research Advisory Council website:  https://www.aic.gov.au/sites/default/files/2020-05/50-89.pdf
+ 
+Labour Market Information Portal. (2021). Summary data 2020. Retrieved from https://lmip.gov.au/default.aspx?LMIP/Downloads/ABSLabourForceRegion
+ 
+Productivity Commission. (2020). Report on government services 2020. Retrieved from https://www.pc.gov.au/research/ongoing/report-on-government-services/2020/justice
+ 
+Productivity Commission. (2021). Report on government services 2021. Retrieved from https://www.pc.gov.au/research/ongoing/report-on-government-services/2021/justice#attachtables
+ 
+Sentencing Advisory Council. (2021). Victoria's indigenous imprisonment rates. Retrieved from https://www.sentencingcouncil.vic.gov.au/sentencing-statistics/victorias-indigenous-imprisonment-rates
+ 
+Silvester. J. (2019, October 5). Forget being tough on crime. It's time we were smart on crime. The Age. Retrieved from https://www.theage.com.au/national/victoria/forget-being-tough-on-crime-it-s-time-we-were-smart-on-crime-20191002-p52wvo.html
+ 
+The World Bank. (2021). Indicators. Retrieved from https://data.worldbank.org/indicator/SP.POP.TOTL?locations=AU
+
+John. B., & Bruce. C. (1992). Unemployment and crime one more time (Research Discussion Paper). Retrieved from the Criminology Research Advisory Council website:  https://www.aic.gov.au/sites/default/files/2020-05/50-89.pdf
+
+
+## Row 3
+
+### Packages
+
+Chang, W., Cheng, J., Allaire. J., Sievert. C., Schloerke. B., Xie. Y., …Borges. Barbara. (2021). shiny: Web Application Framework for R. R package version 1.7.1. Retrieved from https://CRAN.R-project.org/package=shiny
+ 
+Goode. K., & Rey. K. (2019). ggResidpanel: Panels and Interactive Versions of Diagnostic Plots using 'ggplot2'. R package version 0.3.0. Retrieved from https://CRAN.R-project.org/package=ggResidpanel
+ 
+Iannone. R., Allaire. J., & Borges. B. (2020). flexdashboard: R Markdown Format for Flexible Dashboards. R package version 0.5.2. Retrieved from https://CRAN.R-project.org/package=flexdashboard
+ 
+McPherson. J., & Allaire. J. (2021). rsconnect: Deployment Interface for R Markdown Documents and Shiny Applications. R package version 0.8.24. Retrieved from https://CRAN.R-project.org/package=rsconnect
+ 
+Ooms. J. (2021). gifski: Highest Quality GIF Encoder. R package version 1.4.3-1. Retrieved from https://CRAN.R-project.org/package=gifski
+ 
+Pedersen. T. L., & Robinson. David. (2020). gganimate: A Grammar of Animated Graphics. R package version 1.0.7. Retrieved from https://CRAN.R-project.org/package=gganimate
+ 
+Robinson. D., Hayes. A., & Couch. S. (2021). broom: Convert Statistical Objects into Tidy Tibbles. R package version 0.7.9. Retrieved from https://CRAN.R-project.org/package=broom
+ 
+Sievert. C. (2020) Interactive Web-Based Data Visualization with R, plotly, and shiny. Chapman and Hall/CRC Florida, 2020.
+ 
+Slowikowski. K. (2021). ggrepel: Automatically Position Non-Overlapping Text Labels with 'ggplot2'. R package version 0.9.1. Retrieved from https://CRAN.R-project.org/package=ggrepel
+ 
+Urbanek. S. (2013). png: Read and write PNG images. R package version 0.1-7. https://CRAN.R-project.org/package=png
+ 
+Wickham. H. (2016). ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
+ 
+Wickham. H., & Bryan. J. (2019). readxl: Read Excel Files. R package version 1.3.1. Retrieved from https://CRAN.R-project.org/package=readxl
+ 
+Wickham. H., & Hester. Jim. (2021). readr: Read Rectangular Text Data. R package version 2.0.1. Retrieved from https://CRAN.R-project.org/package=readr
+ 
+Wickham. H., Averick. M., Bryan. J., Chang. W., McGowan. L. D., Francois. R., …Yutani. H, (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686. https://doi.org/10.21105/joss.01686
+ 
+Zhu. H. (2021). kableExtra: Construct Complex Table with 'kable' and Pipe Syntax. R package version 1.3.4. Retrieved from https://CRAN.R-project.org/package=kableExtra

@@ -1,0 +1,73 @@
+"","states","Prior Imprisonment Status","Sex","Aboriginal Status","num_prisoners"
+"1","NSW","Prior imprisonment","Male","Aboriginal and Torres Strait Islander",2308
+"2","Victoria","Prior imprisonment","Male","Aboriginal and Torres Strait Islander",475
+"3","Queensland","Prior imprisonment","Male","Aboriginal and Torres Strait Islander",2299
+"4","SA","Prior imprisonment","Male","Aboriginal and Torres Strait Islander",459
+"5","WA","Prior imprisonment","Male","Aboriginal and Torres Strait Islander",1945
+"6","Tasmania","Prior imprisonment","Male","Aboriginal and Torres Strait Islander",104
+"7","NT","Prior imprisonment","Male","Aboriginal and Torres Strait Islander",1069
+"8","ACT","Prior imprisonment","Male","Aboriginal and Torres Strait Islander",87
+"9","Australia","Prior imprisonment","Male","Aboriginal and Torres Strait Islander",8745
+"10","NSW","No prior imprisonment","Male","Aboriginal and Torres Strait Islander",746
+"11","Victoria","No prior imprisonment","Male","Aboriginal and Torres Strait Islander",205
+"12","Queensland","No prior imprisonment","Male","Aboriginal and Torres Strait Islander",440
+"13","SA","No prior imprisonment","Male","Aboriginal and Torres Strait Islander",172
+"14","WA","No prior imprisonment","Male","Aboriginal and Torres Strait Islander",395
+"15","Tasmania","No prior imprisonment","Male","Aboriginal and Torres Strait Islander",33
+"16","NT","No prior imprisonment","Male","Aboriginal and Torres Strait Islander",222
+"17","ACT","No prior imprisonment","Male","Aboriginal and Torres Strait Islander",9
+"18","Australia","No prior imprisonment","Male","Aboriginal and Torres Strait Islander",2218
+"19","NSW","Prior imprisonment","Female","Aboriginal and Torres Strait Islander",179
+"20","Victoria","Prior imprisonment","Female","Aboriginal and Torres Strait Islander",25
+"21","Queensland","Prior imprisonment","Female","Aboriginal and Torres Strait Islander",219
+"22","SA","Prior imprisonment","Female","Aboriginal and Torres Strait Islander",45
+"23","WA","Prior imprisonment","Female","Aboriginal and Torres Strait Islander",259
+"24","Tasmania","Prior imprisonment","Female","Aboriginal and Torres Strait Islander",3
+"25","NT","Prior imprisonment","Female","Aboriginal and Torres Strait Islander",55
+"26","ACT","Prior imprisonment","Female","Aboriginal and Torres Strait Islander",17
+"27","Australia","Prior imprisonment","Female","Aboriginal and Torres Strait Islander",795
+"28","NSW","No prior imprisonment","Female","Aboriginal and Torres Strait Islander",102
+"29","Victoria","No prior imprisonment","Female","Aboriginal and Torres Strait Islander",17
+"30","Queensland","No prior imprisonment","Female","Aboriginal and Torres Strait Islander",90
+"31","SA","No prior imprisonment","Female","Aboriginal and Torres Strait Islander",26
+"32","WA","No prior imprisonment","Female","Aboriginal and Torres Strait Islander",72
+"33","Tasmania","No prior imprisonment","Female","Aboriginal and Torres Strait Islander",4
+"34","NT","No prior imprisonment","Female","Aboriginal and Torres Strait Islander",27
+"35","ACT","No prior imprisonment","Female","Aboriginal and Torres Strait Islander",3
+"36","Australia","No prior imprisonment","Female","Aboriginal and Torres Strait Islander",336
+"37","NSW","Prior imprisonment","Male","Non-Indigenous",4151
+"38","Victoria","Prior imprisonment","Male","Non-Indigenous",2999
+"39","Queensland","Prior imprisonment","Male","Non-Indigenous",3226
+"40","SA","Prior imprisonment","Male","Non-Indigenous",1124
+"41","WA","Prior imprisonment","Male","Non-Indigenous",1958
+"42","Tasmania","Prior imprisonment","Male","Non-Indigenous",316
+"43","NT","Prior imprisonment","Male","Non-Indigenous",82
+"44","ACT","Prior imprisonment","Male","Non-Indigenous",227
+"45","Australia","Prior imprisonment","Male","Non-Indigenous",14067
+"46","NSW","No prior imprisonment","Male","Non-Indigenous",4679
+"47","Victoria","No prior imprisonment","Male","Non-Indigenous",3006
+"48","Queensland","No prior imprisonment","Male","Non-Indigenous",1932
+"49","SA","No prior imprisonment","Male","Non-Indigenous",1002
+"50","WA","No prior imprisonment","Male","Non-Indigenous",1762
+"51","Tasmania","No prior imprisonment","Male","Non-Indigenous",162
+"52","NT","No prior imprisonment","Male","Non-Indigenous",167
+"53","ACT","No prior imprisonment","Male","Non-Indigenous",83
+"54","Australia","No prior imprisonment","Male","Non-Indigenous",12798
+"55","NSW","Prior imprisonment","Female","Non-Indigenous",193
+"56","Victoria","Prior imprisonment","Female","Non-Indigenous",125
+"57","Queensland","Prior imprisonment","Female","Non-Indigenous",226
+"58","SA","Prior imprisonment","Female","Non-Indigenous",64
+"59","WA","Prior imprisonment","Female","Non-Indigenous",143
+"60","Tasmania","Prior imprisonment","Female","Non-Indigenous",21
+"61","NT","Prior imprisonment","Female","Non-Indigenous",8
+"62","ACT","Prior imprisonment","Female","Non-Indigenous",8
+"63","Australia","Prior imprisonment","Female","Non-Indigenous",791
+"64","NSW","No prior imprisonment","Female","Non-Indigenous",366
+"65","Victoria","No prior imprisonment","Female","Non-Indigenous",218
+"66","Queensland","No prior imprisonment","Female","Non-Indigenous",236
+"67","SA","No prior imprisonment","Female","Non-Indigenous",93
+"68","WA","No prior imprisonment","Female","Non-Indigenous",244
+"69","Tasmania","No prior imprisonment","Female","Non-Indigenous",29
+"70","NT","No prior imprisonment","Female","Non-Indigenous",13
+"71","ACT","No prior imprisonment","Female","Non-Indigenous",7
+"72","Australia","No prior imprisonment","Female","Non-Indigenous",1203

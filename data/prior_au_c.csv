@@ -1,0 +1,33 @@
+"","offence","total","prior_imprisonment","imprisonment_status","num_prisoner"
+"1","01 Homicide and related offences",3246,37.4,"prior_imp",1214.004
+"2","01 Homicide and related offences",3246,37.4,"no_prior",2031.996
+"3","02 Acts intended to cause injury",9467,69.5,"prior_imp",6579.565
+"4","02 Acts intended to cause injury",9467,69.5,"no_prior",2887.435
+"5","03 Sexual assault and related offences",5798,32.2,"prior_imp",1866.956
+"6","03 Sexual assault and related offences",5798,32.2,"no_prior",3931.044
+"7","04 Dangerous/negligent acts",1625,74.9,"prior_imp",1217.125
+"8","04 Dangerous/negligent acts",1625,74.9,"no_prior",407.875
+"9","05 Abduction/harassment",587,61.7,"prior_imp",362.179
+"10","05 Abduction/harassment",587,61.7,"no_prior",224.821
+"11","06 Robbery/extortion",3047,70.7,"prior_imp",2154.229
+"12","06 Robbery/extortion",3047,70.7,"no_prior",892.771
+"13","07 Unlawful entry with intent",3886,78.6,"prior_imp",3054.396
+"14","07 Unlawful entry with intent",3886,78.6,"no_prior",831.604
+"15","08 Theft",1239,76.9,"prior_imp",952.791
+"16","08 Theft",1239,76.9,"no_prior",286.209
+"17","09 Fraud/deception",735,44.8,"prior_imp",329.28
+"18","09 Fraud/deception",735,44.8,"no_prior",405.72
+"19","10 Illicit drug offences",6124,42.2,"prior_imp",2584.328
+"20","10 Illicit drug offences",6124,42.2,"no_prior",3539.672
+"21","11 Weapons/explosives",796,68.1,"prior_imp",542.076
+"22","11 Weapons/explosives",796,68.1,"no_prior",253.924
+"23","12 Property damage and environmental pollution",603,68.7,"prior_imp",414.261
+"24","12 Property damage and environmental pollution",603,68.7,"no_prior",188.739
+"25","13 Public order offences",136,69.9,"prior_imp",95.064
+"26","13 Public order offences",136,69.9,"no_prior",40.936
+"27","14 Traffic and vehicle regulatory offences",385,79,"prior_imp",304.15
+"28","14 Traffic and vehicle regulatory offences",385,79,"no_prior",80.85
+"29","15 Offences against justice",3169,82.3,"prior_imp",2608.087
+"30","15 Offences against justice",3169,82.3,"no_prior",560.913
+"31","16 Miscellaneous offences",71,31,"prior_imp",22.01
+"32","16 Miscellaneous offences",71,31,"no_prior",48.99
